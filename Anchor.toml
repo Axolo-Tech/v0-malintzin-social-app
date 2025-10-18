@@ -1,0 +1,11 @@
+[programs.devnet]
+v0-malintzin = "REPLACE_WITH_PROGRAM_ID"
+
+[provider]
+cluster = "devnet"
+wallet = "~/.config/solana/id.json"
+
+[workspace]
+members = [
+  "programs/*"
+]

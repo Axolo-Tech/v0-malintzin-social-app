@@ -1,0 +1,11 @@
+[package]
+name = "v0-malintzin"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "v0_malintzin"
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+anchor-lang = "0.27.0"

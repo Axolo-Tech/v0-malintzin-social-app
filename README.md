@@ -1,30 +1,57 @@
-# Malintzin social app
+# v0-malintzin — Anchor program (ejemplo mínimo)
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+Contenido:
+- Anchor.toml
+- Cargo.toml (workspace)
+- programs/v0-malintzin/Cargo.toml
+- programs/v0-malintzin/src/lib.rs
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/axolotechmexi-9089s-projects/v0-malintzin-social-app)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/aLCoHbna0cd)
+Descripción
+Este programa Anchor permite crear posts, editarlos (solo autor) y dar "like". Es un ejemplo mínimo pensado para desplegar en Devnet.
 
-## Overview
+Cómo desplegar (resumen)
+1. Instala Rust, Solana CLI y Anchor en tu máquina (o usa Codespace/Gitpod).
+2. Configura Solana para Devnet:
+   solana config set --url https://api.devnet.solana.com
+3. Airdrop a tu wallet:
+   solana airdrop 2 <TU_PUBKEY> --url https://api.devnet.solana.com
+4. En el proyecto, compila:
+   anchor build
+5. Despliega:
+   anchor deploy
+   - anchor deploy devolverá el Program ID y creará el keypair del programa.
+6. Actualiza `programs/v0-malintzin/src/lib.rs` cambiando `REPLACE_WITH_PROGRAM_ID` por el Program ID resultante (o actualiza Anchor.toml).
+7. Vuelve a `anchor build` si modificas declare_id.
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+Ejemplo rápido con Anchor JS
+```js
+const provider = anchor.AnchorProvider.env();
+anchor.setProvider(provider);
+const program = anchor.workspace.V0Malintzin;
 
-## Deployment
+const postKeypair = anchor.web3.Keypair.generate();
 
-Your project is live at:
+await program.rpc.createPost("Hola desde Devnet!", {
+  accounts: {
+    post: postKeypair.publicKey,
+    author: provider.wallet.publicKey,
+    systemProgram: anchor.web3.SystemProgram.programId,
+  },
+  signers: [postKeypair],
+  instructions: [
+    await program.account.post.createInstruction(postKeypair),
+  ],
+});
 
-**[https://vercel.com/axolotechmexi-9089s-projects/v0-malintzin-social-app](https://vercel.com/axolotechmexi-9089s-projects/v0-malintzin-social-app)**
+await program.rpc.likePost({
+  accounts: { post: postKeypair.publicKey },
+});
 
-## Build your app
+await program.rpc.updatePost("Contenido nuevo", {
+  accounts: { post: postKeypair.publicKey, author: provider.wallet.publicKey },
+});
+```
 
-Continue building your app on:
-
-**[https://v0.app/chat/projects/aLCoHbna0cd](https://v0.app/chat/projects/aLCoHbna0cd)**
-
-## How It Works
-
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+Notas
+- Ajusta el espacio de la cuenta Post si necesitas más contenido.
+- En producción: validaciones, manejo de lamports/close accounts y límites más precisos.

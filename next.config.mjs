@@ -1,16 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Configuración crucial para permitir que la aplicación se construya ignorando 
-  // errores de tipo que suelen aparecer con librerías de terceros en el Hackathon.
+  // Configuración crucial para ignorar errores de TypeScript
   typescript: {
     // !! Peligro: Esto debe ser 'false' en producción real. 
-    // Usar 'true' solo para el despliegue del hackathon.
     ignoreBuildErrors: true, 
   },
   eslint: {
-    // También ignoramos advertencias y errores de ESlint para el build rápido.
+    // También ignoramos advertencias y errores de ESlint
     ignoreDuringBuilds: true,
-  }
+  },
+  // La línea importante para Vercel: le dice dónde está el directorio de origen
+  distDir: 'build', 
 };
 
 export default nextConfig;
